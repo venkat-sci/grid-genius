@@ -66,6 +66,7 @@ export default function HomeScreen() {
     y: number;
   } | null>(null);
   const [unlockedLevels, setUnlockedLevels] = useState([3]);
+  const [showHelp, setShowHelp] = useState(false);
 
   // Sync unlockedLevels with bestScores and next level after completion
   useEffect(() => {
@@ -292,6 +293,93 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+      {showHelp && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(20,30,50,0.96)",
+            zIndex: 2000,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 24,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 18,
+              padding: 28,
+              maxWidth: 340,
+              width: "100%",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.12,
+              shadowRadius: 8,
+              elevation: 8,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                color: "rgba(20,30,50,0.96)", // orange accent
+                marginBottom: 12,
+              }}
+            >
+              How to Play Grid Genius
+            </Text>
+            <View style={{ marginBottom: 18, alignSelf: "stretch" }}>
+              {[
+                "Tap the numbers in order, starting from 1.",
+                "Each grid has two sets of numbers. After finishing the first set, continue with the next.",
+                "Complete the grid as fast as possible to set a best score!",
+                "Unlock new levels by beating previous ones.",
+                "Use the sidebar to switch levels, and toggles for sound/colorful tiles.",
+              ].map((item, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    marginBottom: 8,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 18, color: "#007AFF", marginRight: 8 }}
+                  >
+                    •
+                  </Text>
+                  <Text style={{ fontSize: 16, color: "#333", flex: 1 }}>
+                    {item}
+                  </Text>
+                </View>
+              ))}
+            </View>
+            <Text
+              style={{
+                fontSize: 18,
+                color: "#fff",
+                backgroundColor: "rgba(20,30,50,0.96)", // orange accent
+                borderRadius: 8,
+                paddingVertical: 8,
+                paddingHorizontal: 22,
+                fontWeight: "bold",
+                overflow: "hidden",
+                marginTop: 8,
+              }}
+              onPress={() => setShowHelp(false)}
+              accessibilityLabel="Close help"
+            >
+              Close
+            </Text>
+          </View>
+        </View>
+      )}
       <View style={styles.mainContent}>
         {sidebarVisible && (
           <Text
@@ -369,7 +457,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
-      <Footer />
+      <Footer onHelpPress={() => setShowHelp(true)} />
     </SafeAreaView>
   );
 }
