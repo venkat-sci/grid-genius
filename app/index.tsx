@@ -2,7 +2,7 @@
 import { useAudioPlayer } from "expo-audio";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useRef, useState } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Switch, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 import Footer from "../components/Footer";
 import Grid from "../components/Grid";
@@ -56,6 +56,7 @@ export default function HomeScreen() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState<number>(0);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const timerIdRef = useRef<number | null>(null);
   // No sound state needed for expo-audio
   const [showConfetti, setShowConfetti] = useState(false);
@@ -88,10 +89,8 @@ export default function HomeScreen() {
   }, [level]);
 
   const handleTap = async (num: number) => {
-    // Always play tap sound, reset if needed
-
+    // Only play sound if enabled
     if (num !== expected) return;
-
     if (expected === 1) {
       const now = Date.now();
       setStartTime(now);
@@ -100,9 +99,10 @@ export default function HomeScreen() {
         setElapsed(Date.now() - now);
       }, 100);
     }
-
-    player.seekTo(0);
-    await player.play();
+    if (isSoundEnabled) {
+      player.seekTo(0);
+      await player.play();
+    }
 
     const index = grid.indexOf(num);
     const newGrid = [...grid];
@@ -270,6 +270,21 @@ export default function HomeScreen() {
           }}
         />
         <View style={styles.gameArea}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <Text style={{ marginRight: 8 }}>Sound</Text>
+            <Switch
+              value={isSoundEnabled}
+              onValueChange={setIsSoundEnabled}
+              thumbColor={isSoundEnabled ? "#007AFF" : "#ccc"}
+              trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
+            />
+          </View>
           <Text style={styles.level}>
             Level: {level}x{level}
           </Text>
