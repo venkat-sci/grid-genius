@@ -12,6 +12,17 @@ interface SidebarProps {
 
 const SIDEBAR_WIDTH = 150;
 
+// Cross-platform best score storage
+const bestScoreStorage = {
+  async getItem(key: string) {
+    if (typeof window !== "undefined" && window.localStorage) {
+      return Promise.resolve(localStorage.getItem(key));
+    } else {
+      return SecureStore.getItemAsync(key);
+    }
+  },
+};
+
 export default function Sidebar(props: SidebarProps) {
   const { visible, level, unlockedLevels, numberOfLevels, onSelectLevel } =
     props;
@@ -31,16 +42,9 @@ export default function Sidebar(props: SidebarProps) {
 
   useEffect(() => {
     async function fetchUnlocked() {
-      let bestScoresRaw = null;
-      if (typeof window !== "undefined") {
-        bestScoresRaw = localStorage.getItem("numberGameBestScores");
-      } else {
-        try {
-          bestScoresRaw = await SecureStore.getItemAsync(
-            "numberGameBestScores"
-          );
-        } catch {}
-      }
+      let bestScoresRaw = await bestScoreStorage.getItem(
+        "numberGameBestScores"
+      );
       let bestScores: { [key: number]: number } = {};
       if (bestScoresRaw) {
         try {
