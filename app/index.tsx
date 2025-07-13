@@ -1,5 +1,5 @@
 // app/index.tsx
-import { Audio } from "expo-av";
+import { useAudioPlayer } from "expo-audio";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
@@ -8,6 +8,8 @@ import Grid from "../components/Grid";
 import Sidebar from "../components/Sidebar";
 import { formatTime } from "../utils/formatTime";
 import { generateNumberPairs } from "../utils/generateNumbers";
+
+const audioSource = require("../assets/tap.mp3");
 
 export default function HomeScreen() {
   const [showHistory, setShowHistory] = useState(false);
@@ -20,29 +22,14 @@ export default function HomeScreen() {
   const [endTime, setEndTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState<number>(0);
   const [timerId, setTimerId] = useState<any>(null);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  // No sound state needed for expo-audio
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiOrigin, setConfettiOrigin] = useState<{
     x: number;
     y: number;
   } | null>(null);
   const [unlockedLevels, setUnlockedLevels] = useState([3]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadSound = async () => {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../assets/tap.mp3")
-      );
-      if (isMounted) setSound(sound);
-    };
-    loadSound();
-
-    return () => {
-      isMounted = false;
-      if (sound) sound.unloadAsync();
-    };
-  }, []);
+  const player = useAudioPlayer(audioSource);
 
   useEffect(() => {
     const { initial } = generateNumberPairs(level);
@@ -58,6 +45,9 @@ export default function HomeScreen() {
   }, [level]);
 
   const handleTap = async (num: number) => {
+    // Always play tap sound, reset if needed
+    player.seekTo(0);
+    await player.play();
     if (num !== expected) return;
 
     if (expected === 1) {
@@ -69,8 +59,6 @@ export default function HomeScreen() {
       }, 100);
       setTimerId(id);
     }
-    if (sound) await sound.replayAsync();
-
     const index = grid.indexOf(num);
     const newGrid = [...grid];
     newGrid[index] =
@@ -193,7 +181,6 @@ export default function HomeScreen() {
         <View style={styles.gameArea}>
           {/* Time section in a styled box */}
           <View style={styles.timeBox}>
-            <Text style={styles.timeBoxLabel}>Time</Text>
             <Text style={styles.timeBoxValue}>
               {startTime && !endTime
                 ? formatTime(elapsed)
@@ -420,7 +407,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   timeBox: {
-    width: 160,
+    width: 200,
     backgroundColor: "#eaf0fb",
     borderRadius: 12,
     paddingVertical: 12,
@@ -431,12 +418,13 @@ const styles = StyleSheet.create({
     boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
     borderWidth: 1,
     borderColor: "#d0d7e5",
+    flexDirection: "row",
+    gap: 8,
   },
   timeBoxLabel: {
     fontSize: 16,
     color: "#007AFF",
     fontWeight: "bold",
-    marginBottom: 2,
     letterSpacing: 1,
   },
   timeBoxValue: {
