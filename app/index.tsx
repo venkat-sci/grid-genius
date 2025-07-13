@@ -18,7 +18,7 @@ export default function HomeScreen() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState<number>(0);
-  const [timerId, setTimerId] = useState<number | null>(null);
+  const [timerId, setTimerId] = useState<any>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiOrigin, setConfettiOrigin] = useState<{
@@ -50,11 +50,11 @@ export default function HomeScreen() {
     setStartTime(null);
     setEndTime(null);
     setElapsed(0);
-    if (timerId !== null) {
+    if (timerId) {
       clearInterval(timerId);
       setTimerId(null);
     }
-  }, [level, timerId]);
+  }, [level]);
 
   const handleTap = async (num: number) => {
     if (num !== expected) return;
