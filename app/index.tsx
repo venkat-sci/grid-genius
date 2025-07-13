@@ -34,6 +34,7 @@ const bestScoreStorage = {
 export default function HomeScreen() {
   // Helper to persist and load best scores
   const BEST_SCORES_KEY = "numberGameBestScores";
+  const numberOfLevels = [3, 4, 5, 6, 7]; // Add more levels if needed
 
   // Load best scores from storage on mount
   useEffect(() => {
@@ -161,7 +162,7 @@ export default function HomeScreen() {
                   setShowConfetti(false);
                   const nextLevel = level + 1;
                   if (
-                    [3, 4, 5, 6].includes(nextLevel) &&
+                    numberOfLevels.includes(nextLevel) &&
                     !unlockedLevels.includes(nextLevel)
                   ) {
                     setUnlockedLevels((prev) => [...prev, nextLevel]);
@@ -220,7 +221,7 @@ export default function HomeScreen() {
         <View style={styles.historyModal}>
           <View style={styles.historyContent}>
             <Text style={styles.historyTitle}>Best Scores</Text>
-            {[3, 4, 5, 6].map((sz) => {
+            {numberOfLevels.map((sz) => {
               // If the current level is completed, always show the latest score for that level
               let score = bestScores[sz];
               let isLatest = false;
@@ -257,6 +258,7 @@ export default function HomeScreen() {
           />
         )}
         <Sidebar
+          numberOfLevels={numberOfLevels}
           visible={sidebarVisible}
           level={level}
           unlockedLevels={unlockedLevels}

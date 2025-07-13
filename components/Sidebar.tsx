@@ -5,15 +5,17 @@ interface SidebarProps {
   visible: boolean;
   level: number;
   unlockedLevels: number[];
+  numberOfLevels: number[];
   onSelectLevel: (lvl: number) => void;
 }
 
-const SIDEBAR_WIDTH = 110;
+const SIDEBAR_WIDTH = 150;
 
 export default function Sidebar({
   visible,
   level,
   unlockedLevels,
+  numberOfLevels,
   onSelectLevel,
 }: SidebarProps) {
   const slideAnim = useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
@@ -29,7 +31,7 @@ export default function Sidebar({
   return (
     <Animated.View style={[styles.sidebar, { left: slideAnim }]}>
       <Text style={styles.sidebarTitle}>Select Grid</Text>
-      {[3, 4, 5, 6].map((lvl) => {
+      {numberOfLevels.map((lvl) => {
         const unlocked = unlockedLevels.includes(lvl);
         return (
           <TouchableOpacity
