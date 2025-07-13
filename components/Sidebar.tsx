@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface SidebarProps {
@@ -11,13 +12,9 @@ interface SidebarProps {
 
 const SIDEBAR_WIDTH = 150;
 
-export default function Sidebar({
-  visible,
-  level,
-  unlockedLevels,
-  numberOfLevels,
-  onSelectLevel,
-}: SidebarProps) {
+export default function Sidebar(props: SidebarProps) {
+  const { visible, level, unlockedLevels, numberOfLevels, onSelectLevel } =
+    props;
   const slideAnim = useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
 
   useEffect(() => {
@@ -26,17 +23,54 @@ export default function Sidebar({
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [visible]);
+  }, [visible, slideAnim]);
+
+  // Compute unlocked levels from both prop and persisted best scores
+  const [persistedUnlocked, setPersistedUnlocked] =
+    useState<number[]>(unlockedLevels);
+
+  useEffect(() => {
+    async function fetchUnlocked() {
+      let bestScoresRaw = null;
+      if (typeof window !== "undefined") {
+        bestScoresRaw = localStorage.getItem("numberGameBestScores");
+      } else {
+        try {
+          bestScoresRaw = await SecureStore.getItemAsync(
+            "numberGameBestScores"
+          );
+        } catch {}
+      }
+      let bestScores: { [key: number]: number } = {};
+      if (bestScoresRaw) {
+        try {
+          bestScores = JSON.parse(bestScoresRaw);
+        } catch {}
+      }
+      const unlockedFromScores = Object.keys(bestScores).map(Number);
+      setPersistedUnlocked(
+        Array.from(new Set([...unlockedLevels, ...unlockedFromScores]))
+      );
+    }
+    fetchUnlocked();
+  }, [unlockedLevels]);
+
+  // Always use persistedUnlocked for unlocking and selection
+  const handleSelectLevel = (lvl: number) => {
+    if (persistedUnlocked.includes(lvl)) {
+      onSelectLevel(lvl);
+    }
+  };
 
   return (
     <Animated.View style={[styles.sidebar, { left: slideAnim }]}>
       <Text style={styles.sidebarTitle}>Select Grid</Text>
       {numberOfLevels.map((lvl) => {
-        const unlocked = unlockedLevels.includes(lvl);
+        const unlocked = persistedUnlocked.includes(lvl);
         return (
           <TouchableOpacity
             key={lvl}
-            onPress={() => unlocked && onSelectLevel(lvl)}
+            onPress={() => handleSelectLevel(lvl)}
             disabled={!unlocked}
           >
             <Text

@@ -265,10 +265,8 @@ export default function HomeScreen() {
           level={level}
           unlockedLevels={unlockedLevels}
           onSelectLevel={(lvl: number) => {
-            if (unlockedLevels.includes(lvl)) {
-              setLevel(lvl);
-              setSidebarVisible(false);
-            }
+            setLevel(lvl);
+            setSidebarVisible(false);
           }}
         />
         <View style={styles.gameArea}>
