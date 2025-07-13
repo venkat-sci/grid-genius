@@ -1,6 +1,10 @@
 // utils/formatTime.ts
 export function formatTime(ms: number): string {
-  const seconds = Math.floor(ms / 1000);
-  const msPart = ms % 1000;
-  return `${seconds}.${msPart.toString().padStart(3, "0")}s`;
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const centiseconds = Math.floor((ms % 1000) / 10); // 2 digits
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}:${centiseconds.toString().padStart(2, "0")}`;
 }

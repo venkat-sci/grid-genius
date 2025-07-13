@@ -138,15 +138,19 @@ export default function HomeScreen() {
           }}
         />
         <View style={styles.gameArea}>
+          {/* Time section in a styled box */}
+          <View style={styles.timeBox}>
+            <Text style={styles.timeBoxLabel}>Time</Text>
+            <Text style={styles.timeBoxValue}>
+              {startTime && !endTime
+                ? formatTime(elapsed)
+                : endTime && startTime
+                ? formatTime(endTime - startTime)
+                : "00:00:00"}
+            </Text>
+          </View>
           <Text style={styles.level}>
             Level: {level}x{level}
-          </Text>
-          <Text style={styles.timer}>
-            {startTime && !endTime
-              ? `Time: ${formatTime(elapsed)}`
-              : endTime && startTime
-              ? `Time: ${formatTime(endTime - startTime)}`
-              : "Tap 1 to start"}
           </Text>
           <View
             style={styles.gridWrapper}
@@ -281,5 +285,32 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "500",
+  },
+  timeBox: {
+    width: 160,
+    backgroundColor: "#eaf0fb",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#d0d7e5",
+  },
+  timeBoxLabel: {
+    fontSize: 16,
+    color: "#007AFF",
+    fontWeight: "bold",
+    marginBottom: 2,
+    letterSpacing: 1,
+  },
+  timeBoxValue: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    letterSpacing: 2,
+    fontVariant: ["tabular-nums"],
   },
 });
