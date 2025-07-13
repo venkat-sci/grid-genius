@@ -1,9 +1,9 @@
-// app/index.tsx
 import { useAudioPlayer } from "expo-audio";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, Switch, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Footer from "../components/Footer";
 import Grid from "../components/Grid";
 import Sidebar from "../components/Sidebar";
@@ -66,6 +66,32 @@ export default function HomeScreen() {
     y: number;
   } | null>(null);
   const [unlockedLevels, setUnlockedLevels] = useState([3]);
+
+  // Sync unlockedLevels with bestScores and next level after completion
+  useEffect(() => {
+    // Unlock all levels present in bestScores
+    const unlockedFromScores = Object.keys(bestScores).map(Number);
+    let levelsToUnlock = [...unlockedLevels];
+    unlockedFromScores.forEach((lvl) => {
+      if (!levelsToUnlock.includes(lvl)) levelsToUnlock.push(lvl);
+      // Also unlock next level if score exists for current
+      const nextLevel = lvl + 1;
+      if (
+        numberOfLevels.includes(nextLevel) &&
+        !levelsToUnlock.includes(nextLevel)
+      ) {
+        levelsToUnlock.push(nextLevel);
+      }
+    });
+    // Remove duplicates and sort
+    levelsToUnlock = Array.from(new Set(levelsToUnlock)).sort((a, b) => a - b);
+    if (
+      levelsToUnlock.length !== unlockedLevels.length ||
+      !levelsToUnlock.every((lvl, i) => unlockedLevels[i] === lvl)
+    ) {
+      setUnlockedLevels(levelsToUnlock);
+    }
+  }, [bestScores, numberOfLevels]);
   const [showEndOptions, setShowEndOptions] = useState(false);
   const player = useAudioPlayer(audioSource);
 
@@ -139,7 +165,8 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.outerContainer}>
+    <SafeAreaView style={styles.outerContainer}>
+      {/* Remove LinearGradient background, revert to solid color */}
       {/* Confetti overlay - covers entire screen, always on top */}
       {showConfetti && confettiOrigin && (
         <View style={styles.confettiOverlay} pointerEvents="none">
@@ -220,9 +247,18 @@ export default function HomeScreen() {
       </View>
       {/* History modal */}
       {showHistory && (
-        <View style={styles.historyModal}>
-          <View style={styles.historyContent}>
+        <View style={styles.fullScreenModal}>
+          <View style={styles.modalHeader}>
             <Text style={styles.historyTitle}>Best Scores</Text>
+            <Text
+              style={styles.closeIcon}
+              onPress={() => setShowHistory(false)}
+              accessibilityLabel="Close history"
+            >
+              ×
+            </Text>
+          </View>
+          <View style={styles.historyScroll}>
             {numberOfLevels.map((sz) => {
               let score = bestScores[sz];
               let isLatest = false;
@@ -232,22 +268,27 @@ export default function HomeScreen() {
                 isLatest = true;
               }
               if (!displayAll) {
-                return;
+                return null;
               }
+              // For now, use current date as placeholder
+              let dateStr = new Date().toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              });
               return (
-                <Text key={sz} style={styles.historyRow}>
-                  {`${sz}x${sz}: `}
-                  {displayAll ? formatTime(score) : "--:--:--"}
-                  {isLatest ? " (Latest)" : ""}
-                </Text>
+                <View key={sz} style={styles.historyRowEntry}>
+                  <Text style={styles.historyRowLabel}>{`${sz}x${sz}`}</Text>
+                  <Text style={styles.historyRowValue}>
+                    {displayAll ? formatTime(score) : "--:--:--"}
+                  </Text>
+                  <Text style={styles.historyRowDate}>{dateStr}</Text>
+                  {isLatest ? (
+                    <Text style={styles.latestBadge}>Latest</Text>
+                  ) : null}
+                </View>
               );
             })}
-            <Text
-              style={styles.closeHistoryBtn}
-              onPress={() => setShowHistory(false)}
-            >
-              Close
-            </Text>
           </View>
         </View>
       )}
@@ -329,7 +370,7 @@ export default function HomeScreen() {
         </View>
       </View>
       <Footer />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -380,14 +421,18 @@ const styles = StyleSheet.create({
   },
   customHeader: {
     height: 60,
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236", // dark navy
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
+    borderBottomColor: "#232b3e",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   headerLeft: {
     width: 40,
@@ -404,9 +449,10 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     color: "#fff",
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     letterSpacing: 1,
+    paddingVertical: 4,
   },
   headerRight: {
     width: 40,
@@ -419,45 +465,92 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     padding: 4,
   },
-  historyModal: {
+  fullScreenModal: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: "#1a2236",
     zIndex: 1000,
-    justifyContent: "center",
-    alignItems: "center",
+    flex: 1,
   },
-  historyContent: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 24,
-    minWidth: 240,
+  modalHeader: {
+    flexDirection: "row",
     alignItems: "center",
-    boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 12,
+    backgroundColor: "#232b3e",
+    borderBottomWidth: 1,
+    borderBottomColor: "#232b3e",
+  },
+  closeIcon: {
+    fontSize: 28,
+    color: "#fff",
+    fontWeight: "bold",
+    padding: 4,
+    marginLeft: 12,
   },
   historyTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "#007AFF",
-    marginBottom: 12,
+    color: "#fff",
+    flex: 1,
+    textAlign: "left",
   },
-  historyRow: {
+  historyScroll: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    backgroundColor: "#1a2236",
+  },
+  historyRowEntry: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#232b3e",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  historyRowLabel: {
     fontSize: 18,
-    color: "#333",
-    marginBottom: 6,
-  },
-  closeHistoryBtn: {
-    marginTop: 18,
-    fontSize: 16,
-    color: "#007AFF",
+    color: "#fff",
     fontWeight: "bold",
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: "#eaf0fb",
-    overflow: "hidden",
+    flex: 1,
+  },
+  historyRowValue: {
+    fontSize: 18,
+    color: "#FFD700",
+    fontWeight: "bold",
+    marginLeft: 12,
+    flex: 1,
+    textAlign: "center",
+  },
+  historyRowDate: {
+    fontSize: 15,
+    color: "#b0b8c1",
+    marginLeft: 12,
+    flex: 1,
+    textAlign: "right",
+  },
+  latestBadge: {
+    fontSize: 13,
+    color: "#fff",
+    backgroundColor: "#007AFF",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 10,
+    fontWeight: "bold",
   },
   confettiOverlay: {
     position: "absolute",
@@ -481,7 +574,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     flex: 1,
-    backgroundColor: "#f5f7fa",
+    backgroundColor: "#f5f7fa", // fallback, gradient overlays
   },
   header: {
     height: 60,
@@ -560,17 +653,24 @@ const styles = StyleSheet.create({
   },
   timer: { fontSize: 20, marginBottom: 16, color: "#333", fontWeight: "bold" },
   footer: {
-    height: 44,
-    backgroundColor: "#007AFF",
+    height: 48,
+    backgroundColor: "#0d1b2a", // deep navy blue
     justifyContent: "center",
     alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
+    borderTopColor: "#1a2236",
+    paddingHorizontal: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   footerText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "500",
+    letterSpacing: 0.5,
   },
   timeBox: {
     width: 200,
