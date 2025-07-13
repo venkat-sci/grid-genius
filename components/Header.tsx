@@ -19,7 +19,7 @@ export default function Header({ onHamburgerPress }: HeaderProps) {
 const styles = StyleSheet.create({
   header: {
     height: 60,
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236",
     justifyContent: "center",
     alignItems: "center",
     borderBottomWidth: 1,

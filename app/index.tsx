@@ -350,7 +350,7 @@ export default function HomeScreen() {
                   }}
                 >
                   <Text
-                    style={{ fontSize: 18, color: "#007AFF", marginRight: 8 }}
+                    style={{ fontSize: 18, color: "#1a2236", marginRight: 8 }}
                   >
                     •
                   </Text>
@@ -411,7 +411,7 @@ export default function HomeScreen() {
             <Switch
               value={isSoundEnabled}
               onValueChange={setIsSoundEnabled}
-              thumbColor={isSoundEnabled ? "#007AFF" : "#ccc"}
+              thumbColor={isSoundEnabled ? "#1a2236" : "#ccc"}
               trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
             />
             <Text style={{ marginLeft: 16, marginRight: 8 }}>
@@ -420,7 +420,7 @@ export default function HomeScreen() {
             <Switch
               value={isColorfulTiles}
               onValueChange={setIsColorfulTiles}
-              thumbColor={isColorfulTiles ? "#007AFF" : "#ccc"}
+              thumbColor={isColorfulTiles ? "#1a2236" : "#ccc"}
               trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
             />
           </View>
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   endOptionsTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#007AFF",
+    color: "#1a2236",
     marginBottom: 10,
   },
   endOptionsScore: {
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   endOptionsBtn: {
     fontSize: 18,
     color: "#fff",
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236",
     paddingVertical: 8,
     paddingHorizontal: 22,
     borderRadius: 8,
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
   latestBadge: {
     fontSize: 13,
     color: "#fff",
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236",
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236",
     justifyContent: "center",
     alignItems: "center",
     borderBottomWidth: 1,
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 12,
-    color: "#007AFF",
+    color: "#1a2236",
   },
   gameArea: {
     flex: 1,
@@ -724,20 +724,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e7ff",
     fontWeight: "bold",
     fontSize: 16,
-    color: "#007AFF",
+    color: "#1a2236",
     marginBottom: 8,
     width: "100%",
     textAlign: "center",
   },
   selectedLevel: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#1a2236",
     color: "#fff",
   },
   level: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 8,
-    color: "#007AFF",
+    color: "#1a2236",
   },
   timer: { fontSize: 20, marginBottom: 16, color: "#333", fontWeight: "bold" },
   footer: {
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   },
   timeBoxLabel: {
     fontSize: 16,
-    color: "#007AFF",
+    color: "#1a2236",
     fontWeight: "bold",
     letterSpacing: 1,
   },
