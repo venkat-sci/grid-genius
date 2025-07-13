@@ -5,12 +5,13 @@ import { StyleSheet, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 import Footer from "../components/Footer";
 import Grid from "../components/Grid";
-import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { formatTime } from "../utils/formatTime";
 import { generateNumberPairs } from "../utils/generateNumbers";
 
 export default function HomeScreen() {
+  const [showHistory, setShowHistory] = useState(false);
+  const [bestScores, setBestScores] = useState<{ [key: number]: number }>({});
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [level, setLevel] = useState(3);
   const [grid, setGrid] = useState<number[]>([]);
@@ -81,6 +82,15 @@ export default function HomeScreen() {
     setExpected(expected + 1);
 
     if (expected + 1 > level * level * 2) {
+      // Update best score for this grid size
+      setBestScores((prev) => {
+        const prevScore = prev[level];
+        const newScore = endTime && startTime ? endTime - startTime : 0;
+        if (!prevScore || (newScore > 0 && newScore < prevScore)) {
+          return { ...prev, [level]: newScore };
+        }
+        return prev;
+      });
       setEndTime(Date.now());
       if (timerId) {
         clearInterval(timerId);
@@ -116,7 +126,50 @@ export default function HomeScreen() {
           <ConfettiCannon count={200} origin={confettiOrigin} fadeOut={false} />
         </View>
       )}
-      <Header onHamburgerPress={() => setSidebarVisible((v) => !v)} />
+      {/* Custom header with hamburger left and history right */}
+      <View style={styles.customHeader}>
+        <View style={styles.headerLeft}>
+          <Text
+            style={styles.hamburger}
+            onPress={() => setSidebarVisible((v) => !v)}
+            accessibilityRole="button"
+            accessibilityLabel="Open sidebar"
+          >
+            ☰
+          </Text>
+        </View>
+        <Text style={styles.headerTitle}>Number Grid Game</Text>
+        <View style={styles.headerRight}>
+          <Text
+            style={styles.historyBtn}
+            onPress={() => setShowHistory(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Show best scores"
+          >
+            🏆
+          </Text>
+        </View>
+      </View>
+      {/* History modal */}
+      {showHistory && (
+        <View style={styles.historyModal}>
+          <View style={styles.historyContent}>
+            <Text style={styles.historyTitle}>Best Scores</Text>
+            {[3, 4, 5, 6].map((sz) => (
+              <Text key={sz} style={styles.historyRow}>
+                {sz}x{sz}:{" "}
+                {bestScores[sz] ? formatTime(bestScores[sz]) : "--:--:--"}
+              </Text>
+            ))}
+            <Text
+              style={styles.closeHistoryBtn}
+              onPress={() => setShowHistory(false)}
+            >
+              Close
+            </Text>
+          </View>
+        </View>
+      )}
       <View style={styles.mainContent}>
         {sidebarVisible && (
           <Text
@@ -172,6 +225,87 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  customHeader: {
+    height: 60,
+    backgroundColor: "#007AFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+    boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
+  },
+  headerLeft: {
+    width: 40,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  hamburger: {
+    fontSize: 28,
+    color: "#fff",
+    fontWeight: "bold",
+    padding: 4,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
+    letterSpacing: 1,
+  },
+  headerRight: {
+    width: 40,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  historyBtn: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
+    padding: 4,
+  },
+  historyModal: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    zIndex: 1000,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  historyContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 24,
+    minWidth: 240,
+    alignItems: "center",
+    boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
+  },
+  historyTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#007AFF",
+    marginBottom: 12,
+  },
+  historyRow: {
+    fontSize: 18,
+    color: "#333",
+    marginBottom: 6,
+  },
+  closeHistoryBtn: {
+    marginTop: 18,
+    fontSize: 16,
+    color: "#007AFF",
+    fontWeight: "bold",
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "#eaf0fb",
+    overflow: "hidden",
+  },
   confettiOverlay: {
     position: "absolute",
     top: 0,
@@ -241,7 +375,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     backgroundColor: "#fff",
     borderRadius: 18,
-    elevation: 4,
     boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
     marginTop: 12,
     justifyContent: "center",
@@ -295,7 +428,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
-    elevation: 3,
+    boxShadow: "0px 2px 8px rgba(0, 122, 255, 0.12)",
     borderWidth: 1,
     borderColor: "#d0d7e5",
   },
