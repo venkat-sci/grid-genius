@@ -57,6 +57,7 @@ export default function HomeScreen() {
   const [endTime, setEndTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState<number>(0);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isColorfulTiles, setIsColorfulTiles] = useState(false);
   const timerIdRef = useRef<number | null>(null);
   // No sound state needed for expo-audio
   const [showConfetti, setShowConfetti] = useState(false);
@@ -284,6 +285,15 @@ export default function HomeScreen() {
               thumbColor={isSoundEnabled ? "#007AFF" : "#ccc"}
               trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
             />
+            <Text style={{ marginLeft: 16, marginRight: 8 }}>
+              Colorful Tiles
+            </Text>
+            <Switch
+              value={isColorfulTiles}
+              onValueChange={setIsColorfulTiles}
+              thumbColor={isColorfulTiles ? "#007AFF" : "#ccc"}
+              trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
+            />
           </View>
           <Text style={styles.level}>
             Level: {level}x{level}
@@ -309,7 +319,12 @@ export default function HomeScreen() {
               });
             }}
           >
-            <Grid grid={grid} size={level} onTilePress={handleTap} />
+            <Grid
+              grid={grid}
+              size={level}
+              onTilePress={handleTap}
+              isColorful={isColorfulTiles}
+            />
           </View>
         </View>
       </View>
