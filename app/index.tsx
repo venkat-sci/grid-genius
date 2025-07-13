@@ -225,16 +225,18 @@ export default function HomeScreen() {
             {numberOfLevels.map((sz) => {
               let score = bestScores[sz];
               let isLatest = false;
+              const displayAll = typeof score === "number" && score > 0;
               if (sz === level && endTime && startTime) {
                 score = endTime - startTime;
                 isLatest = true;
               }
+              if (!displayAll) {
+                return;
+              }
               return (
                 <Text key={sz} style={styles.historyRow}>
                   {`${sz}x${sz}: `}
-                  {typeof score === "number" && score > 0
-                    ? formatTime(score)
-                    : "--:--:--"}
+                  {displayAll ? formatTime(score) : "--:--:--"}
                   {isLatest ? " (Latest)" : ""}
                 </Text>
               );
