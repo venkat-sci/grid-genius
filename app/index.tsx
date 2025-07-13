@@ -115,10 +115,12 @@ export default function HomeScreen() {
     setExpected(expected + 1);
 
     if (expected + 1 > level * level * 2) {
+      // Calculate new score
+      const newScore = Date.now() - (startTime ?? Date.now());
+      setEndTime(Date.now());
       // Update best score for this grid size and persist
       setBestScores((prev) => {
         const prevScore = prev[level];
-        const newScore = endTime && startTime ? endTime - startTime : 0;
         let updated = prev;
         if (!prevScore || (newScore > 0 && newScore < prevScore)) {
           updated = { ...prev, [level]: newScore };
@@ -126,7 +128,6 @@ export default function HomeScreen() {
         }
         return updated;
       });
-      setEndTime(Date.now());
       if (timerIdRef.current) {
         clearInterval(timerIdRef.current);
         timerIdRef.current = null;
@@ -222,7 +223,6 @@ export default function HomeScreen() {
           <View style={styles.historyContent}>
             <Text style={styles.historyTitle}>Best Scores</Text>
             {numberOfLevels.map((sz) => {
-              // If the current level is completed, always show the latest score for that level
               let score = bestScores[sz];
               let isLatest = false;
               if (sz === level && endTime && startTime) {
@@ -231,7 +231,7 @@ export default function HomeScreen() {
               }
               return (
                 <Text key={sz} style={styles.historyRow}>
-                  {sz}x{sz}:{" "}
+                  {`${sz}x${sz}: `}
                   {typeof score === "number" && score > 0
                     ? formatTime(score)
                     : "--:--:--"}
