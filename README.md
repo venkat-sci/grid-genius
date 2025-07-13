@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# Grid Genius
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A fast-paced, brain-boosting number puzzle game built with [Expo](https://expo.dev) and React Native. Tap numbers in order, unlock new levels, and challenge yourself to beat your best time!
 
-## Get started
+## Features
 
-1. Install dependencies
+- Simple, intuitive gameplay: Tap numbers in sequence as quickly as possible.
+- Multiple grid sizes: Progress from easy to challenging levels (3x3 up to 12x12).
+- Unlockable levels: Beat your best scores to unlock new grids.
+- Sound and color toggles: Personalize your experience with vibrant tiles and satisfying sound effects.
+- History & achievements: Track your best times and see your progress.
+- Modern, attractive design: Sleek interface, smooth animations, confetti celebrations.
+- Play offline: No internet required.
 
+## How to Play
+
+- Tap the numbers in order, starting from 1.
+- Each grid has two sets of numbers—finish the first, then continue with the next.
+- Complete the grid as fast as possible to set a new best score.
+- Unlock new levels by beating previous ones.
+- Use the sidebar to switch levels and customize sound/color options.
+
+## Getting Started
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/venkat-sci/grid-genius.git
+   cd grid-genius
+   ```
+2. Install dependencies:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. Start the app:
    ```bash
    npx expo start
    ```
+   - Scan the QR code with Expo Go, or run on Android/iOS simulator.
 
-In the output, you'll find options to open the app in a
+## Build for Google Play Store
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. Build APK/AAB (Expo Classic):
+   ```bash
+   npx expo build:android
+   ```
+   - Choose APK (for direct install) or AAB (recommended for Play Store).
+2. Download the build from Expo dashboard.
+3. Create a Google Play Developer account and app listing.
+4. Upload your APK/AAB, fill in app details, and publish.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Project Structure
 
-## Get a fresh project
+- `app/` — Main app code (screens, components, hooks, utils)
+- `components/` — Shared UI components
+- `utils/` — Utility functions
+- `assets/` — Images, fonts, sounds
 
-When you're ready, run:
+## Contributing
 
-```bash
-npm run reset-project
-```
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## License
 
-## Learn more
+MIT
 
-To learn more about developing your project with Expo, look at the following resources:
+## Links
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Source Code](https://github.com/venkat-sci/grid-genius)
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Native Documentation](https://reactnative.dev/)
