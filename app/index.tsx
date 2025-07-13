@@ -34,7 +34,7 @@ const bestScoreStorage = {
 export default function HomeScreen() {
   // Helper to persist and load best scores
   const BEST_SCORES_KEY = "numberGameBestScores";
-  const numberOfLevels = [3, 4, 5, 6, 7]; // Add more levels if needed
+  const numberOfLevels = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // Add more levels if needed
 
   // Load best scores from storage on mount
   useEffect(() => {
@@ -205,7 +205,7 @@ export default function HomeScreen() {
             ☰
           </Text>
         </View>
-        <Text style={styles.headerTitle}>Number Grid Game</Text>
+        <Text style={styles.headerTitle}>Grid Genius</Text>
         <View style={styles.headerRight}>
           <Text
             style={styles.historyBtn}
@@ -270,6 +270,9 @@ export default function HomeScreen() {
           }}
         />
         <View style={styles.gameArea}>
+          <Text style={styles.level}>
+            Level: {level}x{level}
+          </Text>
           {/* Time section in a styled box */}
           <View style={styles.timeBox}>
             <Text style={styles.timeBoxValue}>
@@ -280,9 +283,7 @@ export default function HomeScreen() {
                 : "00:00:00"}
             </Text>
           </View>
-          <Text style={styles.level}>
-            Level: {level}x{level}
-          </Text>
+
           <View
             style={styles.gridWrapper}
             onLayout={(e) => {

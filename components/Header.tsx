@@ -8,7 +8,7 @@ interface HeaderProps {
 export default function Header({ onHamburgerPress }: HeaderProps) {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>Number Game</Text>
+      <Text style={styles.headerText}>Grid Genius</Text>
       <TouchableOpacity style={styles.hamburger} onPress={onHamburgerPress}>
         <Text style={styles.hamburgerIcon}>&#9776;</Text>
       </TouchableOpacity>

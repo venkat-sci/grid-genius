@@ -46,7 +46,7 @@ export default function Sidebar({
                 !unlocked && styles.lockedLevel,
               ]}
             >
-              {lvl}x{lvl} {!unlocked && "🔒"}
+              {lvl}x{lvl} {unlocked ? "🔓" : "🔒"}
             </Text>
           </TouchableOpacity>
         );
