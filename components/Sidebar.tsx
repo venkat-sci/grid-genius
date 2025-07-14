@@ -1,6 +1,12 @@
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 
 interface SidebarProps {
   visible: boolean;
@@ -69,26 +75,34 @@ export default function Sidebar(props: SidebarProps) {
   return (
     <Animated.View style={[styles.sidebar, { left: slideAnim }]}>
       <Text style={styles.sidebarTitle}>Select Grid</Text>
-      {numberOfLevels.map((lvl) => {
-        const unlocked = persistedUnlocked.includes(lvl);
-        return (
-          <TouchableOpacity
-            key={lvl}
-            onPress={() => handleSelectLevel(lvl)}
-            disabled={!unlocked}
-          >
-            <Text
-              style={[
-                styles.levelButton,
-                level === lvl && styles.selectedLevel,
-                !unlocked && styles.lockedLevel,
-              ]}
+      <ScrollView
+        style={{ width: "100%" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: 24,
+        }}
+      >
+        {numberOfLevels.map((lvl) => {
+          const unlocked = persistedUnlocked.includes(lvl);
+          return (
+            <TouchableOpacity
+              key={lvl}
+              onPress={() => handleSelectLevel(lvl)}
+              disabled={!unlocked}
             >
-              {lvl}x{lvl} {unlocked ? "🔓" : "🔒"}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+              <Text
+                style={[
+                  styles.levelButton,
+                  level === lvl && styles.selectedLevel,
+                  !unlocked && styles.lockedLevel,
+                ]}
+              >
+                {lvl}x{lvl} {unlocked ? "🔓" : "🔒"}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
     </Animated.View>
   );
 }
