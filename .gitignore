@@ -39,3 +39,7 @@ yarn-error.*
 app-example
 android
 ios
+
+# Android
+android/gradle.properties
+android/app/grid-genius-key.keystore
