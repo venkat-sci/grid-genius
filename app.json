@@ -12,7 +12,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.gridgenius"
+      "bundleIdentifier": "com.redwoodplace.gridgenius"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
-      "package": "com.anonymous.gridgenius"
+      "package": "com.redwoodplace.gridgenius"
     },
     "web": {
       "bundler": "metro",
@@ -53,6 +53,12 @@
       "eas": {
         "projectId": "69162547-1ba4-4151-b029-885563b37475"
       }
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "imageWidth": 200,
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     }
   }
 }
