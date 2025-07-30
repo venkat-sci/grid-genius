@@ -6,6 +6,7 @@ import ConfettiCannon from "react-native-confetti-cannon";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Footer from "../components/Footer";
 import Grid from "../components/Grid";
+import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { formatTime } from "../utils/formatTime";
 import { generateNumberPairs } from "../utils/generateNumbers";
@@ -222,33 +223,16 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
-      {/* Custom header with hamburger left and history right */}
-      <View style={styles.customHeader}>
-        <View style={styles.headerLeft}>
-          <Text
-            style={styles.hamburger}
-            onPress={() => setSidebarVisible((v) => !v)}
-            accessibilityRole="button"
-            accessibilityLabel="Open sidebar"
-          >
-            ☰
-          </Text>
-        </View>
-        <Text style={styles.headerTitle}>Grid Genius</Text>
-        <View style={styles.headerRight}>
-          <Text
-            style={styles.historyBtn}
-            onPress={() => setShowHistory(true)}
-            accessibilityRole="button"
-            accessibilityLabel="Show best scores"
-          >
-            🏆
-          </Text>
-        </View>
-      </View>
+      {/* Custom header moved to Header component */}
+      <Header
+        onHamburgerPress={() => setSidebarVisible((v) => !v)}
+        onHistoryPress={() => setShowHistory(true)}
+        onHelpPress={() => setShowHelp(true)}
+        title="Grid Genius"
+      />
       {/* History modal */}
       {showHistory && (
-        <View style={styles.fullScreenModal}>
+        <SafeAreaView style={styles.fullScreenModal}>
           <View style={styles.modalHeader}>
             <Text style={styles.historyTitle}>Best Scores</Text>
             <Text
@@ -291,7 +275,7 @@ export default function HomeScreen() {
               );
             })}
           </View>
-        </View>
+        </SafeAreaView>
       )}
       {showHelp && (
         <View
@@ -301,13 +285,25 @@ export default function HomeScreen() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(20,30,50,0.96)",
             zIndex: 2000,
             justifyContent: "center",
             alignItems: "center",
-            padding: 24,
           }}
         >
+          {/* Overlay to catch outside touches */}
+          <Text
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(20,30,50,0.96)",
+              zIndex: 1,
+            }}
+            onPress={() => setShowHelp(false)}
+            accessibilityLabel="Close help popup"
+          />
           <View
             style={{
               backgroundColor: "#fff",
@@ -321,13 +317,14 @@ export default function HomeScreen() {
               shadowOpacity: 0.12,
               shadowRadius: 8,
               elevation: 8,
+              zIndex: 2,
             }}
           >
             <Text
               style={{
                 fontSize: 22,
                 fontWeight: "bold",
-                color: "rgba(20,30,50,0.96)", // orange accent
+                color: "rgba(20,30,50,0.96)",
                 marginBottom: 12,
               }}
             >
@@ -364,7 +361,7 @@ export default function HomeScreen() {
               style={{
                 fontSize: 18,
                 color: "#fff",
-                backgroundColor: "rgba(20,30,50,0.96)", // orange accent
+                backgroundColor: "rgba(20,30,50,0.96)",
                 borderRadius: 8,
                 paddingVertical: 8,
                 paddingHorizontal: 22,
@@ -414,9 +411,7 @@ export default function HomeScreen() {
               thumbColor={isSoundEnabled ? "#1a2236" : "#ccc"}
               trackColor={{ false: "#e0e0e0", true: "#b3d1ff" }}
             />
-            <Text style={{ marginLeft: 16, marginRight: 8 }}>
-              Colorful Tiles
-            </Text>
+            <Text style={{ marginLeft: 16, marginRight: 8 }}>Colorful</Text>
             <Switch
               value={isColorfulTiles}
               onValueChange={setIsColorfulTiles}

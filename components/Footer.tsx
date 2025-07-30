@@ -11,15 +11,7 @@ import {
 export default function Footer({ onHelpPress }: { onHelpPress?: () => void }) {
   return (
     <View style={styles.footer}>
-      <View style={{ flex: 1, alignItems: "flex-start", paddingLeft: 16 }}>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={onHelpPress}
-          accessibilityLabel="Show how to play"
-        >
-          <Ionicons name="help-circle-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <View style={{ flex: 1, alignItems: "flex-start", paddingLeft: 16 }} />
       <Text style={styles.footerText}>© 2025 Grid Genius</Text>
       <View style={{ flex: 1, alignItems: "flex-end", paddingRight: 16 }}>
         <TouchableOpacity
