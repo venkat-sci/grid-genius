@@ -1,6 +1,6 @@
 import { useAudioPlayer } from "expo-audio";
 import * as SecureStore from "expo-secure-store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Platform, StyleSheet, Switch, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -35,22 +35,12 @@ const bestScoreStorage = {
 export default function HomeScreen() {
   // Helper to persist and load best scores
   const BEST_SCORES_KEY = "numberGameBestScores";
-  const numberOfLevels = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // Add more levels if needed
+  const numberOfLevels = useMemo(() => [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], []); // Add more levels if needed
 
-  // Load best scores from storage on mount
-  useEffect(() => {
-    (async () => {
-      const stored = await bestScoreStorage.getItem(BEST_SCORES_KEY);
-      if (stored) {
-        try {
-          setBestScores(JSON.parse(stored));
-        } catch {}
-      }
-    })();
-  }, []);
   const [showHistory, setShowHistory] = useState(false);
   const [bestScores, setBestScores] = useState<{ [key: number]: number }>({});
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  // Start with 3, will update after loading best scores
   const [level, setLevel] = useState(3);
   const [grid, setGrid] = useState<number[]>([]);
   const [expected, setExpected] = useState(1);
@@ -68,6 +58,45 @@ export default function HomeScreen() {
   } | null>(null);
   const [unlockedLevels, setUnlockedLevels] = useState([3]);
   const [showHelp, setShowHelp] = useState(false);
+
+  // Load best scores from storage on mount and set initial level
+  useEffect(() => {
+    (async () => {
+      const stored = await bestScoreStorage.getItem(BEST_SCORES_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setBestScores(parsed);
+          // Find all unlocked levels (including next unlockable)
+          const unlocked = Object.keys(parsed).map(Number);
+          let allUnlocked = [...unlocked];
+          // Add next level if it should be unlocked
+          unlocked.forEach((lvl) => {
+            const nextLevel = lvl + 1;
+            if (
+              numberOfLevels.includes(nextLevel) &&
+              !allUnlocked.includes(nextLevel)
+            ) {
+              allUnlocked.push(nextLevel);
+            }
+          });
+          // Only keep allowed levels
+          allUnlocked = allUnlocked.filter((lvl) =>
+            numberOfLevels.includes(lvl)
+          );
+          const maxUnlocked =
+            allUnlocked.length > 0 ? Math.max(...allUnlocked) : 3;
+          setLevel(maxUnlocked);
+          setUnlockedLevels((prev) => {
+            const all = Array.from(new Set([...prev, ...allUnlocked])).sort(
+              (a, b) => a - b
+            );
+            return all;
+          });
+        } catch {}
+      }
+    })();
+  }, [numberOfLevels]);
 
   // Sync unlockedLevels with bestScores and next level after completion
   useEffect(() => {
@@ -93,7 +122,7 @@ export default function HomeScreen() {
     ) {
       setUnlockedLevels(levelsToUnlock);
     }
-  }, [bestScores, numberOfLevels]);
+  }, [bestScores, numberOfLevels, unlockedLevels]);
   const [showEndOptions, setShowEndOptions] = useState(false);
   const player = useAudioPlayer(audioSource);
 

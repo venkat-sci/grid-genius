@@ -16,7 +16,9 @@ export default function Footer({ onHelpPress }: { onHelpPress?: () => void }) {
       <View style={{ flex: 1, alignItems: "flex-end", paddingRight: 16 }}>
         <TouchableOpacity
           style={styles.iconContainer}
-          onPress={() => Linking.openURL("https://github.com/venkat-sci")}
+          onPress={() =>
+            Linking.openURL("https://github.com/venkat-sci/grid-genius")
+          }
           accessibilityLabel="Visit my GitHub profile"
         >
           <Ionicons name="logo-github" size={24} color="#fff" />
